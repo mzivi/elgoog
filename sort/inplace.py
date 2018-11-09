@@ -96,7 +96,7 @@ def _build_heap(array):
 
 
 def _up_heap(heap, new_idx):
-    parent_idx = int(0.5 * (new_idx - 1))
+    parent_idx = int(floor(0.5 * (new_idx - 1)))
     while parent_idx >= 0 and heap[parent_idx] < heap[new_idx]:
         heap[parent_idx], heap[new_idx] = heap[new_idx], heap[parent_idx]
         new_idx = parent_idx
@@ -129,6 +129,50 @@ def _down_heap(heap, last_idx):
             break
 
 
+def dheapsort(array, d):
+    _build_d_heap(array, d)
+    _sort_d_heap(array, d)
+
+
+def _build_d_heap(array, d):
+
+    for i in range(1, len(array)):
+        _up_d_heap(array, d, i)
+
+
+def _up_d_heap(heap, d, new_idx):
+    parent_idx = int(floor((new_idx - 1) / d))
+    while parent_idx >= 0 and heap[parent_idx] < heap[new_idx]:
+        heap[parent_idx], heap[new_idx] = heap[new_idx], heap[parent_idx]
+        new_idx = parent_idx
+        parent_idx = int(floor((new_idx - 1) / d))
+
+
+def _sort_d_heap(heap, d):
+    for i in range(len(heap) - 1, 0, -1):
+        _down_d_heap(heap, d, i)
+
+
+def _down_d_heap(heap, d, last_idx):
+
+    if last_idx < 1:
+        return
+
+    heap[0], heap[last_idx] = heap[last_idx], heap[0]
+    parent_idx = 0
+    largest_idx = parent_idx
+    while True:
+        for i in range(d):
+            child_idx = d * (parent_idx + 1) - i  # start from the right child
+            if child_idx < last_idx and heap[largest_idx] < heap[child_idx]:
+                largest_idx = child_idx
+        if parent_idx != largest_idx:
+            heap[parent_idx], heap[largest_idx] = heap[largest_idx], heap[parent_idx]
+            parent_idx = largest_idx
+        else:
+            break
+
+
 if __name__ == "__main__":
 
     x = [1, 5, 4, 3, 7, 6, 2]
@@ -151,5 +195,9 @@ if __name__ == "__main__":
     assert sorted(xx) == xx
     xx = x[:]
     heapsort(xx)
+    print(xx)
+    assert sorted(xx) == xx
+    xx = x[:]
+    dheapsort(xx, 3)
     print(xx)
     assert sorted(xx) == xx
