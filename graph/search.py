@@ -107,11 +107,12 @@ def _dijkstra(graph, source, target):
 
 
 if __name__ == "__main__":
-    agraph = [[None, 0.2, 0.8], [None, None, 0.2], [None, None, None]]
 
     def run_path_finder(graph, source, target, strategy):
         path = find_path(graph, source, target, strategy=strategy)
         return source, target, calculate_path_cost(graph, path), path
+
+    agraph = [[None, 0.2, 0.8], [None, None, 0.2], [None, None, None]]
 
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 0, 'BFS')))
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 1, 'BFS')))
@@ -124,3 +125,15 @@ if __name__ == "__main__":
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 2, 'dijkstra')))
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 1, 2, 'dijkstra')))
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 1, 0, 'dijkstra')))
+
+    # this graph has a loop
+    agraph = [
+        [None, 1, 0.2, None, None, None],
+        [None, None, None, 0.2, None, None],
+        [None, 0.2, None, None, None, None],
+        [None, None, None, None, 0.2, 1],
+        [None, None, 1, None, None, 0.2],
+        [None, None, None, None, None, None]
+    ]
+    print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 5, 'BFS')))
+    print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 5, 'dijkstra')))
