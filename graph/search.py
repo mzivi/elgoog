@@ -106,6 +106,53 @@ def _dijkstra(graph, source, target):
     return []
 
 
+class ANode:
+    def __init__(self, index, origin, cost_accrued, estimated_cost):
+        self.index = index
+        self.origin = origin
+        self.cost_accrued = cost_accrued
+        self.estimated_cost = estimated_cost
+
+    @property
+    def total_est_cost(self):
+        return self.cost_accrued + self.estimated_cost
+
+    def __le__(self, other):
+        return self.total_est_cost <= other.total_est_cost
+
+    def __lt__(self, other):
+        return self.total_est_cost < other.total_est_cost
+
+    def __ge__(self, other):
+        return self.total_est_cost >= other.total_est_cost
+
+    def __gt__(self, other):
+        return self.total_est_cost > other.total_est_cost
+
+    def __len__(self):
+        return 4
+
+    def __iter__(self):
+        return iter((self.index, self.origin, self.cost_accrued, self.estimated_cost))
+
+
+def astar(graph, source, target, estimate_cost_fun):
+    nodes_queue = []
+    heapq.heappush(nodes_queue, ANode(source, None, 0, estimate_cost_fun(source, target)))
+    visited = set()
+    while nodes_queue:
+        next_node = heapq.heappop(nodes_queue)
+        node_index, origin, cost_accrued, estimated_cost = next_node
+        if node_index not in visited:
+            visited.add(node_index)
+            if node_index == target:
+                return _backtrack(next_node)
+            for key, weight in graph[node_index].items():
+                if key not in visited and weight:
+                    heapq.heappush(nodes_queue, ANode(key, next_node, cost_accrued + weight, estimate_cost_fun(key, target)))
+    return []
+
+
 if __name__ == "__main__":
 
     def run_path_finder(graph, source, target, strategy):
@@ -125,6 +172,43 @@ if __name__ == "__main__":
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 2, 'dijkstra')))
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 1, 2, 'dijkstra')))
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 1, 0, 'dijkstra')))
+
+    import math
+
+    graph_2d = {}
+    side_len = 10
+    for i in range(side_len + 1):
+        for j in range(side_len + 1):
+            graph_2d[(i, j)] = {}
+            if i > 0:
+                graph_2d[(i, j)][(i - 1, j)] = 1.0
+            if i < side_len:
+                graph_2d[(i, j)][(i + 1, j)] = 1.0
+            if j > 0:
+                graph_2d[(i, j)][(i, j - 1)] = 1.0
+            if j < side_len:
+                graph_2d[(i, j)][(i, j + 1)] = 1.0
+            if i > 0 and j > 0:
+                graph_2d[(i, j)][(i - 1, j - 1)] = math.sqrt(2)
+            if i > 0 and j < side_len:
+                graph_2d[(i, j)][(i - 1, j + 1)] = math.sqrt(2)
+            if i < side_len and j > 0:
+                graph_2d[(i, j)][(i + 1, j - 1)] = math.sqrt(2)
+            if i < side_len and j < side_len:
+                graph_2d[(i, j)][(i + 1, j + 1)] = math.sqrt(2)
+
+    def estimate_cost(x, y):
+        return math.sqrt((x[0] - y[0])**2 + (x[1] - y[1])**2)
+
+
+    def run_astar(graph, source, target):
+        path = astar(graph, source, target, estimate_cost)
+        return source, target, calculate_path_cost(graph, path), path
+
+    print("from {} to {} costs {}: {}".format(*run_astar(graph_2d, (0, 0), (side_len, side_len))))
+
+    graph_2d[(4, 4)][(5, 5)] = None
+    print("from {} to {} costs {} (with block from (4, 4) to (5, 5)): {}".format(*run_astar(graph_2d, (0, 0), (side_len, side_len))))
 
     # this graph has a loop
     agraph = [
