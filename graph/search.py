@@ -173,6 +173,18 @@ if __name__ == "__main__":
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 1, 2, 'dijkstra')))
     print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 1, 0, 'dijkstra')))
 
+    # this graph has a loop
+    agraph = [
+        [None, 1, 0.2, None, None, None],
+        [None, None, None, 0.2, None, None],
+        [None, 0.2, None, None, None, None],
+        [None, None, None, None, 0.2, 1],
+        [None, None, 1, None, None, 0.2],
+        [None, None, None, None, None, None]
+    ]
+    print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 5, 'BFS')))
+    print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 5, 'dijkstra')))
+
     import math
 
     graph_2d = {}
@@ -209,15 +221,3 @@ if __name__ == "__main__":
 
     graph_2d[(4, 4)][(5, 5)] = None
     print("from {} to {} costs {} (with block from (4, 4) to (5, 5)): {}".format(*run_astar(graph_2d, (0, 0), (side_len, side_len))))
-
-    # this graph has a loop
-    agraph = [
-        [None, 1, 0.2, None, None, None],
-        [None, None, None, 0.2, None, None],
-        [None, 0.2, None, None, None, None],
-        [None, None, None, None, 0.2, 1],
-        [None, None, 1, None, None, 0.2],
-        [None, None, None, None, None, None]
-    ]
-    print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 5, 'BFS')))
-    print("from {} to {} costs {}: {}".format(*run_path_finder(agraph, 0, 5, 'dijkstra')))
