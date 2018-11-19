@@ -1,6 +1,7 @@
 from collections import namedtuple
 from collections import deque
 import heapq
+from functools import partial
 
 
 def calculate_path_cost(graph, path):
@@ -40,7 +41,7 @@ def _validate(graph):
 
 def _breath_first_search(graph, source, target):
     # nodes are enriched with a field which represent the node they come from to backtrack the shortest path
-    Node = namedtuple('Node', ['index', 'origin'])
+    Node = namedtuple('Node', ['element', 'origin'])
     nodes_queue = deque()
     nodes_queue.appendleft(Node(source, None))
     visited = set()
@@ -57,17 +58,17 @@ def _breath_first_search(graph, source, target):
 
 
 def _backtrack(node):
-    result = [node.index]
+    result = [node.element]
     while node.origin:
         node = node.origin
-        result.append(node.index)
+        result.append(node.element)
     result.reverse()
     return result
 
 
 class DNode:
-    def __init__(self, index, origin, cost):
-        self.index = index
+    def __init__(self, element, origin, cost):
+        self.element = element
         self.origin = origin
         self.cost = cost
 
@@ -87,7 +88,7 @@ class DNode:
         return 3
 
     def __iter__(self):
-        return iter((self.index, self.origin, self.cost))
+        return iter((self.element, self.origin, self.cost))
 
 
 def _dijkstra(graph, source, target):
@@ -107,8 +108,8 @@ def _dijkstra(graph, source, target):
 
 
 class ANode:
-    def __init__(self, index, origin, cost_accrued, estimated_cost):
-        self.index = index
+    def __init__(self, element, origin, cost_accrued, estimated_cost):
+        self.element = element
         self.origin = origin
         self.cost_accrued = cost_accrued
         self.estimated_cost = estimated_cost
@@ -133,23 +134,23 @@ class ANode:
         return 4
 
     def __iter__(self):
-        return iter((self.index, self.origin, self.cost_accrued, self.estimated_cost))
+        return iter((self.element, self.origin, self.cost_accrued, self.estimated_cost))
 
 
-def astar(graph, source, target, estimate_cost_fun):
+def astar(source, target, estimate_cost_fun, get_neighbors_fun):
     nodes_queue = []
     heapq.heappush(nodes_queue, ANode(source, None, 0, estimate_cost_fun(source, target)))
     visited = set()
     while nodes_queue:
         next_node = heapq.heappop(nodes_queue)
-        node_index, origin, cost_accrued, estimated_cost = next_node
-        if node_index not in visited:
-            visited.add(node_index)
-            if node_index == target:
+        element, origin, cost_accrued, estimated_cost = next_node
+        if element not in visited:
+            visited.add(element)
+            if element == target:
                 return _backtrack(next_node)
-            for key, weight in graph[node_index].items():
-                if key not in visited and weight:
-                    heapq.heappush(nodes_queue, ANode(key, next_node, cost_accrued + weight, estimate_cost_fun(key, target)))
+            for neighbor, weight in get_neighbors_fun(element):
+                if neighbor not in visited and weight:
+                    heapq.heappush(nodes_queue, ANode(neighbor, next_node, cost_accrued + weight, estimate_cost_fun(neighbor, target)))
     return []
 
 
@@ -213,8 +214,11 @@ if __name__ == "__main__":
         return math.sqrt((x[0] - y[0])**2 + (x[1] - y[1])**2)
 
 
+    def get_neighbors(element, graph):
+        return graph[element].items()
+
     def run_astar(graph, source, target):
-        path = astar(graph, source, target, estimate_cost)
+        path = astar(source, target, estimate_cost, partial(get_neighbors, graph=graph))
         return source, target, calculate_path_cost(graph, path), path
 
     print("from {} to {} costs {}: {}".format(*run_astar(graph_2d, (0, 0), (side_len, side_len))))
