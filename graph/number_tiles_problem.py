@@ -81,10 +81,11 @@ def solve(problem):
 
 if __name__ == "__main__":
 
-    problem = (1, 2, 3, 5, 7, 6, 4, 8, None)
-    print(problem)
-    print(solve(problem))
+    def run(problem):
+        print("Problem to solve: {}".format(problem))
+        solution = solve(problem)
+        print("Solution found in {} moves: {}".format(len(solution), solution))
 
-    problem = generate_problem()
-    print(problem)
-    print(solve(problem))
+
+    run((8, 3, 5, 4, 1, 7, 2, 6, None))
+    run(generate_problem())
