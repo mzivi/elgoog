@@ -110,12 +110,21 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib.colors as colors
 
-    width, height = 20, 20
+    width, height = 40, 20
+    maze_id = 11
     maze = create_maze(width, height)
 
     # open entry and exit points
     maze[:2, :2] = 1
     maze[-2:, -2:] = 1
+    # mark entry and exit cells
+    maze[1, 1] = 3
+    maze[-2, -2] = 4
+    rendered_maze = rendering_grid(maze, 4)
+    plt.axis('off')
+    cmap = colors.ListedColormap(np.array([[0, 0, 0], [1, 1, 1], [0, 0, 1], [1, 0, 0], [0, 1, 0]]))
+    plt.imshow(rendered_maze, cmap=cmap)
+    plt.savefig('mazes/maze_{}.png'.format(maze_id), bbox_inches='tight', pad_inches=0, dpi=300)
 
     def estimate_cost_fun(source, target):
         return abs(source[0] - target[0]) + abs(source[1] - target[1])
@@ -128,19 +137,15 @@ if __name__ == '__main__':
     def get_neighbors_fun(cell):
         return [(n, 1.) for n in get_neighbors_of(cell[0], cell[1], width, height) if no_wall_between(cell, n)]
 
-
-    rendered_maze = rendering_grid(maze, 4)
-    plt.axis('off')
-    cmap = colors.ListedColormap(np.array([[0, 0, 0], [1, 1, 1]]))
-    plt.imshow(rendered_maze, cmap=cmap)
-
     path = astar((0, 0), (width - 1, height - 1), estimate_cost_fun, get_neighbors_fun)
     solved_maze = draw_path(path, maze)
+    solved_maze[1, 1] = 3
+    solved_maze[-2, -2] = 4
+
     rendered_solved_maze = rendering_grid(solved_maze, 4)
 
     plt.figure()
-    cmap = colors.ListedColormap(np.array([[0, 0, 0], [1, 1, 1], [1, 0, 0]]))
+    plt.axis('off')
+    cmap = colors.ListedColormap(np.array([[0, 0, 0], [1, 1, 1], [0, 0, 1], [1, 0, 0], [0, 1, 0]]))
     plt.imshow(rendered_solved_maze, cmap=cmap)
-
-
-    pass
+    plt.savefig('mazes/solved_maze_{}.png'.format(maze_id), bbox_inches='tight', pad_inches=0, dpi=300)
