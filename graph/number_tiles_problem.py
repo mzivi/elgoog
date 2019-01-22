@@ -18,7 +18,7 @@ def solution_for(size=4):
 
 
 def calculate_distance(c1, c2):
-    if len(c2) != len(c2):
+    if len(c1) != len(c2):
         raise Exception('Non-conformant times: len(c1) = {} and len(c2) = {}'.format(len(c1), len(c2)))
     size = len(c1)
     side_len = int(round(math.sqrt(size)))
