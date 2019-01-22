@@ -11,8 +11,7 @@ def random_maze_on(nodes, neighbors_of):
     neighbors = neighbors_of(node)
     while neighbors:
         next_node = neighbors[random.choice(len(neighbors))]
-        _link_to(node, next_node, maze_map)
-        _link_to(next_node, node, maze_map)
+        _link_undirected(node, next_node, maze_map)
         from_node[next_node] = node
         node = next_node
         visited.add(node)
@@ -22,6 +21,11 @@ def random_maze_on(nodes, neighbors_of):
             neighbors = [n for n in neighbors_of(node) if n not in visited]
 
     return lambda n: maze_map[n]
+
+
+def _link_undirected(n1, n2, m):
+    _link_to(n1, n2, m)
+    _link_to(n2, n1, m)
 
 
 def _link_to(n1, n2, m):
