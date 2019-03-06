@@ -71,19 +71,47 @@ def _expand_from(s, i, j):
     return s[i+1:j]
 
 
+def longestPalindromeDPnew(s):
+    if len(s) <= 0:
+        return ''
+
+    result = s[0]
+    is_pld = [[True, True]]
+    for j, cj in enumerate(s[1:]):
+        is_pld_j = []
+        is_pld_jm1 = is_pld[-1]
+        is_pld.append(is_pld_j)
+        for i, ci in enumerate(s[:j + 1]):
+            is_pld_j.append(is_pld_jm1[i + 1] and ci == cj)
+            if is_pld_j[-1] and j - i + 2 > len(result):
+                result = s[i:j + 2]
+        is_pld_j.append(True)
+        is_pld_j.append(True)
+    return result
+
+
 if __name__ == '__main__':
     print(longestPalindrome('babad'))
     print(longestPalindrome('a'))
     print(longestPalindrome('bb'))
     print(longestPalindrome('a' * 10))
     print(longestPalindrome('a' * 1000))
+    print('')
 
     print(longestPalindromeDP('cbbd'))
     print(longestPalindromeDP('babad'))
     print(longestPalindromeDP('bananas'))
     print(longestPalindromeDP('ccc'))
+    print('')
 
     print(longestPalindromeDP2('cbbd'))
     print(longestPalindromeDP2('babad'))
     print(longestPalindromeDP2('bananas'))
     print(longestPalindromeDP2('ccc'))
+    print('')
+
+    print(longestPalindromeDPnew('cbbd'))
+    print(longestPalindromeDPnew('babad'))
+    print(longestPalindromeDPnew('bananas'))
+    print(longestPalindromeDPnew('ccc'))
+    print('')

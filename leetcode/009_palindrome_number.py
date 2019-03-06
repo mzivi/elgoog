@@ -18,7 +18,6 @@
 #
 # Coud you solve it without converting the integer to a string?
 
-import math
 
 class Solution:
 

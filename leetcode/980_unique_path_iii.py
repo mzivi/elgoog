@@ -1,4 +1,4 @@
-##On a 2-dimensional grid, there are 4 types of squares:
+# On a 2-dimensional grid, there are 4 types of squares:
 #  1. represents the starting square.There is exactly one starting square.
 #  2. represents the ending square.There is exactly one ending square.
 #  0. represents empty squares we can walk over.
@@ -37,7 +37,6 @@ import collections
 
 
 class Solution:
-
 
     def uniquePathsIII(self, grid: 'List[List[int]]') -> 'int':
         n = len(grid)
