@@ -22,21 +22,21 @@ def bfs(get_neighbors, source, target):
 
 
 def dfs(get_neighbors, source, target):
-    """ Search a path from source to target with Breadth-First-Search. """
+    """ Search a path from source to target with Depth-First-Search. """
 
     parents = {}
     visited = set()
-    queue = collections.deque()
-    queue.append(source)
-    while queue:
-        vertex = queue.pop()
+    stack = collections.deque()
+    stack.append(source)
+    while stack:
+        vertex = stack.pop()
         if vertex == target:
             return _backtrack(target, lambda v: parents.get(v))
         visited.add(vertex)
         neighbors = [n for n in get_neighbors(vertex) if n not in visited]
         if neighbors:
-            queue.append(vertex)
-            queue.append(neighbors[0])
+            stack.append(vertex)
+            stack.append(neighbors[0])
             parents[neighbors[0]] = vertex
     return []
 
