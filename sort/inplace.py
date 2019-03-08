@@ -96,11 +96,11 @@ def _build_heap(array):
 
 
 def _up_heap(heap, new_idx):
-    parent_idx = int(floor(0.5 * (new_idx - 1)))
+    parent_idx = (new_idx - 1) // 2
     while parent_idx >= 0 and heap[parent_idx] < heap[new_idx]:
         heap[parent_idx], heap[new_idx] = heap[new_idx], heap[parent_idx]
         new_idx = parent_idx
-        parent_idx = int(floor(0.5 * (new_idx - 1)))
+        parent_idx = (new_idx - 1) // 2
 
 
 def _sort_heap(heap):
@@ -141,11 +141,11 @@ def _build_d_heap(array, d):
 
 
 def _up_d_heap(heap, d, new_idx):
-    parent_idx = int(floor((new_idx - 1) / d))
+    parent_idx = (new_idx - 1) // d
     while parent_idx >= 0 and heap[parent_idx] < heap[new_idx]:
         heap[parent_idx], heap[new_idx] = heap[new_idx], heap[parent_idx]
         new_idx = parent_idx
-        parent_idx = int(floor((new_idx - 1) / d))
+        parent_idx = (new_idx - 1) // d
 
 
 def _sort_d_heap(heap, d):
